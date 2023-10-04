@@ -4,7 +4,7 @@
 
     const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('hashed')}`
+        'Authorization': `Bearer ${sessionStorage.getItem('hashed')}`
     }
 
     let textInput = ''

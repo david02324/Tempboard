@@ -25,7 +25,7 @@
             case 202:
                 if (!rememberMeInput) {
                     const resJson = await res.json()
-                    localStorage.setItem('hashed', resJson.hashed)
+                    sessionStorage.setItem('hashed', resJson.hashed)
                 }
 
                 push('/board')
