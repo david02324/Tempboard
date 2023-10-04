@@ -3,7 +3,7 @@
     import routes from "./routes.js";
 </script>
 
-<main class="w-screen h-screen">
+<main class="w-screen h-screen flex justify-center">
     <Router {routes} />
 </main>
 
