@@ -2,9 +2,10 @@
     import {onMount} from "svelte";
     import {replace} from "svelte-spa-router";
 
+    const token = localStorage.getItem('hashed') || sessionStorage.getItem('hashed')
     const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionStorage.getItem('hashed')}`
+        'Authorization': `Bearer ${token}`
     }
 
     let recent = null
@@ -80,7 +81,7 @@
 
         const res = await fetch(
             '/api/board/upload/image',
-            { headers: { 'Authorization': `Bearer ${sessionStorage.getItem('hashed')}` }, body: formData, method: 'POST' }
+            { headers: { 'Authorization': `Bearer ${token}` }, body: formData, method: 'POST' }
         )
         if (!res.ok) {
             alert('Upload error', res)

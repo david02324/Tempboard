@@ -1,6 +1,7 @@
 <script>
     import logo from '../assets/logo.png'
     import {push} from "svelte-spa-router";
+    import {onMount} from "svelte";
 
     const fetchName = async () => {
         const res = await fetch('/api/user/name')
@@ -23,10 +24,9 @@
 
         switch (res.status) {
             case 202:
-                if (!rememberMeInput) {
-                    const resJson = await res.json()
-                    sessionStorage.setItem('hashed', resJson.hashed)
-                }
+                const resJson = await res.json()
+                rememberMeInput ? localStorage.setItem('hashed', resJson.hashed)
+                    : sessionStorage.setItem('hashed', resJson.hashed)
 
                 push('/board')
                 return
@@ -37,6 +37,14 @@
                 alert(`ERROR: ${res}`)
         }
     }
+
+    // enter with saved token
+    onMount(() => {
+        const token = localStorage.getItem('hashed') || sessionStorage.getItem('hashed')
+        if (!token) return
+
+        push('/board')
+    })
 </script>
 
 <div class="flex items-center justify-center w-full h-full">
