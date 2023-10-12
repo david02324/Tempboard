@@ -10,6 +10,7 @@
     let recent = null
     let currentImage = ''
     let currentText = ''
+    let copiedAlert = false
     onMount(async () => {
         fetchRecent()
 
@@ -88,6 +89,26 @@
 
         fetchRecent()
     }
+
+    const copyRecent = async () => {
+        if (!recent) return
+
+        switch (recent.type) {
+            case 'text':
+                await navigator.clipboard.writeText(recent.data)
+                break
+            case 'image':
+                const res = await fetch(document.getElementById('recentImage').src)
+                const blob = await res.blob()
+
+                const item = new ClipboardItem({ [blob.type]: blob })
+                await navigator.clipboard.write([item])
+                break
+        }
+
+        copiedAlert = true
+        setTimeout(() => copiedAlert = false, 5000)
+    }
 </script>
 
 <div class="flex flex-col gap-y-5 items-center justify-center w-full lg:w-[1024px] h-full">
@@ -107,15 +128,21 @@
     {#if recent !== null}
         <div class="flex-col gap-y-2 w-[640px]">
             <h1 class="text-2xl">Recent</h1>
-            <div class="rounded-lg hover:shadow-lg hover:cursor-pointer text-lg
+            <button on:click={copyRecent} class="rounded-lg hover:shadow-lg hover:cursor-pointer text-lg
                         border border-cyan-400 w-full min-h-[80px] flex flex-col justify-center items-center px-2 py-1">
                 {#if recent.type === 'text'}
                     <div class="max-w-[600px]">{recent.data}</div>
                 {:else if recent.type === 'image'}
-                    <img src="data:image/png;base64,{recent.data}" alt="recentImage" width="640"/>
+                    <img id="recentImage" src="data:image/png;base64,{recent.data}" alt="recentImage" width="640"/>
                 {/if}
                 <div class="w-full text-sm text-right">{(new Date(recent.createdAt)).toLocaleString()}</div>
-            </div>
+            </button>
         </div>
     {/if}
 </div>
+
+{#if copiedAlert}
+    <div class="fixed bottom-5 right-5 bg-green-300 text-green-700 py-3 px-5 text-md rounded-lg min-w-[400px]">
+        Copied!
+    </div>
+{/if}
